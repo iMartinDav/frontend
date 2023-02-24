@@ -1,28 +1,57 @@
-import React from 'react';
-import '../styles/components/App.styl';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import Header from '../components/Header';
-import About from '../components/About';
+import Main from '../components/Main';
 import Profile from '../components/Profile';
 import Experience from '../components/Experience';
-import Academic from '../components/Academic';
+import Courses from '../components/Courses';
+import Languages from '../components/Languages';
 import Skills from '../components/Skills';
 import Interest from '../components/Interest';
-import Languages from '../components/Languages';
+import getData from '../utils/getData';
 
+// Define the App component
 const App = () => {
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+    // Fetch user data from server
+    const fetchUserData = async () => {
+      try {
+        const { data } = await getData('/data.json');
+        setUser(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
-    <>
-      <Header>
-        <About />
-      </Header>
-      <Profile />
-      <Experience />
-      <Academic />
-      <Skills />
-      <Interest />
-      <Languages />
-    </>
-  )
+    <Container>
+      <Header />
+      <Main>
+        <Profile user={user} />
+        <Experience user={user} />
+        <Courses user={user} />
+        <Languages user={user} />
+        <Skills user={user} />
+        <Interest user={user} />
+      </Main>
+    </Container>
+  );
 };
 
+// Export the App component as the default export
 export default App;
+
+// Define the Container styled component
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f7f7f7;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+`;
